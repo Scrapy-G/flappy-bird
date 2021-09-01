@@ -1,11 +1,4 @@
 ///for loading screen
-var loading = true;
-
-i = 0;
-var loadingAnim = setInterval(function() {
-  i = ++i % 4;
-  $("#loading").html("Loading "+Array(i+1).join("."));
-}, 800);
 
 document.onreadystatechange = () => {
     if (document.readyState !== "complete") {
@@ -14,13 +7,8 @@ document.onreadystatechange = () => {
     } else {
         document.querySelector("#loader").style.display = "none";
         document.querySelector("#root").style.visibility = "visible";
-        loading = false;
-        clearInterval(loadingAnim);
     }
-};
-
-var loadingText = document.querySelector("#loader-text");
-
+}
 
 //objects
 var gameArea = {

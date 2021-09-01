@@ -1,10 +1,34 @@
+///for loading screen
+var loading = true;
+
+i = 0;
+var loadingAnim = setInterval(function() {
+  i = ++i % 4;
+  $("#loading").html("Loading "+Array(i+1).join("."));
+}, 800);
+
+document.onreadystatechange = () => {
+    if (document.readyState !== "complete") {
+        document.querySelector("#root").style.visibility = "hidden";
+        document.querySelector("#loader").style.visibility = "visible";
+    } else {
+        document.querySelector("#loader").style.display = "none";
+        document.querySelector("#root").style.visibility = "visible";
+        loading = false;
+        clearInterval(loadingAnim);
+    }
+};
+
+var loadingText = document.querySelector("#loader-text");
+
+
 //objects
 var gameArea = {
     canvas: document.getElementById("canvas"),
     ctx: this.canvas.getContext("2d"),
     height: canvas.height,
     width: canvas.width,
-    background: loadImage("./assets/img/background.svg"),
+    background: loadImage("./assets/img/background.png"),
     groundImage: loadImage("./assets/img/ground.png"),
 
     update: function(){
@@ -35,8 +59,8 @@ var obstacles = {
     width: 90,
     distance: 100,
     speedX: 3,
-    topImage: loadImage("./assets/img/obs-top.svg"),
-    bottomImage: loadImage("./assets/img/obs-bottom.svg"),
+    topImage: loadImage("./assets/img/obs-top.png"),
+    bottomImage: loadImage("./assets/img/obs-bottom.png"),
     spawning: false,
 
     update: function(){
@@ -96,7 +120,7 @@ var obstacles = {
 }
 
 var flappyBird = {
-    image: loadImage("./assets/img/bird.svg"),
+    image: loadImage("./assets/img/bird.png"),
     width: 50,
     height: 50,
     x: 150,
@@ -168,14 +192,13 @@ var flappyBird = {
     //bird moves upward with one flap
     flap: function(e){
         if(e.repeat || this.fell || this.dead)
-            return;
-    
-        if(e.key == " "){
-            playSound("./assets/sound/wing.mp3");
-            flappyBird.speedY = -23;
-            flappyBird.gravitySpeed = 8;
-            flappyBird.angle = -0.3;
-        }
+            return;    
+        
+        playSound("./assets/sound/wing.mp3");
+        flappyBird.speedY = -23;
+        flappyBird.gravitySpeed = 8;
+        flappyBird.angle = -0.3;
+        
     },
 }
 //end of objects
@@ -184,6 +207,7 @@ var score = 0;
 var isPlaying = false;
 var isGameOver = false;
 window.addEventListener("keydown", (e) => handle(e));
+gameArea.canvas.addEventListener("click", e => handle(e));
 
 document.getElementById("play").addEventListener("click", resetGame)  ;
 gameArea.init();
@@ -202,7 +226,7 @@ function animate(){
         
     }else { //prompt to start game
         ctx.font = "30px Pixeboy";
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "black";
         ctx.fillText("Press Space to start", 100, 500);
         // ctx.strokeText("Press Space to start", 100, 500);
     }
@@ -311,7 +335,8 @@ function handle(e){
         isPlaying = true;
         startGame();
     }
-    flappyBird.flap(e);
+    if(e.key == " " || e.type == "click")
+        flappyBird.flap(e);
 }
 
 function playSound(src){
